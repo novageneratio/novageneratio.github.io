@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Магазин в Telegram</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .product {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        .product img {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+        .price {
+            color: #28a745;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        .buy-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.1em;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛍️ Мой Магазин</h1>
+        
+        <div class="product">
+            <h3>Телефон iPhone 15</h3>
+            <div class="price">99 990 ₽</div>
+            <button class="buy-btn">Купить сейчас</button>
+        </div>
+        
+        <div class="product">
+            <h3>Ноутбук MacBook Pro</h3>
+            <div class="price">199 990 ₽</div>
+            <button class="buy-btn">Купить сейчас</button>
+        </div>
+        
+        <div class="product">
+            <h3>Наушники AirPods</h3>
+            <div class="price">19 990 ₽</div>
+            <button class="buy-btn">Купить сейчас</button>
+        </div>
+    </div>
+
+    <script>
+        // Простая логика для Telegram Web App
+        if (window.Telegram && window.Telegram.WebApp) {
+            const tg = window.Telegram.WebApp;
+            tg.expand(); // Раскрыть на весь экран
+            tg.enableClosingConfirmation(); // Подтверждение закрытия
+            
+            // Обработчики кнопок
+            document.querySelectorAll('.buy-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const product = this.parentElement.querySelector('h3').textContent;
+                    const price = this.parentElement.querySelector('.price').textContent;
+                    alert(`Товар "${product}" за ${price} добавлен в корзину!`);
+                });
+            });
+        }
+    </script>
+</body>
+</html>

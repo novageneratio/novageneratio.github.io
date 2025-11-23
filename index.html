@@ -82,22 +82,7 @@
         </div>
     </div>
 
-    <script>
-        // Простая логика для Telegram Web App
-        if (window.Telegram && window.Telegram.WebApp) {
-            const tg = window.Telegram.WebApp;
-            tg.expand(); // Раскрыть на весь экран
-            tg.enableClosingConfirmation(); // Подтверждение закрытия
-            
-            // Обработчики кнопок
-            document.querySelectorAll('.buy-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const product = this.parentElement.querySelector('h3').textContent;
-                    const price = this.parentElement.querySelector('.price').textContent;
-                    alert(`Товар "${product}" за ${price} добавлен в корзину!`);
-                });
-            });
-        }
-    </script>
+    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
+
 </body>
 </html>

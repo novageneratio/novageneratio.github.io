@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Магазин в Telegram</title>
+    <title>Telegram Магазин</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,77 +13,149 @@
         }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             min-height: 100vh;
             padding: 20px;
         }
         .container {
             max-width: 400px;
             margin: 0 auto;
+        }
+        .header {
             background: white;
-            border-radius: 20px;
             padding: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         .product {
-            background: #f8f9fa;
+            background: white;
             border-radius: 15px;
             padding: 15px;
-            margin: 10px 0;
-            text-align: center;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
-        .product img {
-            width: 100%;
-            border-radius: 10px;
+        .product h3 {
             margin-bottom: 10px;
+            color: #333;
         }
         .price {
-            color: #28a745;
+            color: #27ae60;
             font-weight: bold;
             font-size: 1.2em;
             margin: 10px 0;
         }
         .buy-btn {
-            background: #007bff;
+            background: #e74c3c;
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            cursor: pointer;
+            padding: 12px;
+            border-radius: 8px;
             width: 100%;
-            font-size: 1.1em;
+            font-size: 1em;
+            cursor: pointer;
         }
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #333;
+        .cart {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🛍️ Мой Магазин</h1>
-        
-        <div class="product">
-            <h3>Телефон iPhone 15</h3>
-            <div class="price">99 990 ₽</div>
-            <button class="buy-btn">Купить сейчас</button>
-        </div>
-        
-        <div class="product">
-            <h3>Ноутбук MacBook Pro</h3>
-            <div class="price">199 990 ₽</div>
-            <button class="buy-btn">Купить сейчас</button>
-        </div>
-        
-        <div class="product">
-            <h3>Наушники AirPods</h3>
-            <div class="price">19 990 ₽</div>
-            <button class="buy-btn">Купить сейчас</button>
+    <div id="app">
+        <div class="container">
+            <div class="header">
+                <h1>🛍️ Мой магазин</h1>
+                <p>Добро пожаловать! 🎉</p>
+            </div>
+
+            <div class="product" v-for="product in products" :key="product.id">
+                <h3>{{ product.name }}</h3>
+                <p>{{ product.description }}</p>
+                <div class="price">{{ product.price }} руб.</div>
+                <button class="buy-btn" @click="addToCart(product)">
+                    🛒 Добавить в корзину
+                </button>
+            </div>
+
+            <div class="cart" v-if="cart.length > 0">
+                <h3>🛒 Корзина ({{ cart.length }})</h3>
+                <div v-for="item in cart" :key="item.id">
+                    {{ item.name }} - {{ item.price }} руб.
+                </div>
+                <button class="buy-btn" style="background: #27ae60; margin-top: 10px;" @click="checkout">
+                    💳 Оформить заказ ({{ totalPrice }} руб.)
+                </button>
+            </div>
         </div>
     </div>
 
-    <script src="https://telegram.org/js/telegram-web-app.js?59"></script>
-
+    <script>
+        const { createApp } = Vue;
+        
+        createApp({
+            data() {
+                return {
+                    products: [
+                        {
+                            id: 1,
+                            name: "iPhone 15 Pro",
+                            description: "Новый смартфон от Apple",
+                            price: 99990
+                        },
+                        {
+                            id: 2, 
+                            name: "MacBook Air",
+                            description: "Легкий и мощный ноутбук",
+                            price: 129990
+                        },
+                        {
+                            id: 3,
+                            name: "AirPods Pro",
+                            description: "Беспроводные наушники",
+                            price: 24990
+                        }
+                    ],
+                    cart: []
+                }
+            },
+            computed: {
+                totalPrice() {
+                    return this.cart.reduce((sum, item) => sum + item.price, 0);
+                }
+            },
+            methods: {
+                addToCart(product) {
+                    this.cart.push(product);
+                    alert(`Товар "${product.name}" добавлен в корзину!`);
+                },
+                checkout() {
+                    if (window.Telegram && window.Telegram.WebApp) {
+                        const tg = window.Telegram.WebApp;
+                        tg.sendData(JSON.stringify({
+                            action: 'checkout',
+                            products: this.cart,
+                            total: this.totalPrice
+                        }));
+                    } else {
+                        alert(`Заказ оформлен! Сумма: ${this.totalPrice} руб.`);
+                        this.cart = [];
+                    }
+                }
+            },
+            mounted() {
+                // Интеграция с Telegram
+                if (window.Telegram && window.Telegram.WebApp) {
+                    const tg = window.Telegram.WebApp;
+                    tg.expand();
+                    tg.enableClosingConfirmation();
+                    console.log("Telegram Web App инициализирован!");
+                }
+            }
+        }).mount('#app');
+    </script>
 </body>
 </html>
